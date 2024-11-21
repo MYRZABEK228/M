@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Сандар Матрицасы</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #1e1e2f;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      margin: 20px 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      max-width: 400px;
+      margin: 20px auto;
+    }
+    .cell {
+      width: 70px;
+      height: 70px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #4caf50;
+      color: white;
+      font-size: 1.5em;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .cell:hover {
+      background-color: #45a049;
+    }
+    .info {
+      margin: 20px 0;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Сандар Матрицасы</h1>
+  <p>Мақсат: Сандарды ретімен басыңыз (1-ден 25-ке дейін).</p>
+  <div class="grid" id="grid"></div>
+  <div class="info">
+    <p id="time">Уақыт: 0 сек</p>
+    <p id="errors">Қателер: 0</p>
+  </div>
+  <button onclick="startGame()">Ойынды бастау</button>
+
+  <script>
+    const grid = document.getElementById('grid');
+    const timeDisplay = document.getElementById('time');
+    const errorsDisplay = document.getElementById('errors');
+
+    let numbers = [];
+    let currentNumber = 1;
+    let startTime;
+    let timerInterval;
+    let errors = 0;
+
+    // Матрица құру
+    function generateGrid() {
+      numbers = Array.from({ length: 25 }, (_, i) => i + 1);
+      numbers = numbers.sort(() => Math.random() - 0.5); // Сандарды араластыру
+      grid.innerHTML = '';
+      numbers.forEach((num) => {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.textContent = num;
+        cell.onclick = () => handleCellClick(num, cell);
+        grid.appendChild(cell);
+      });
+    }
+
+    // Санды басу оқиғасы
+    function handleCellClick(num, cell) {
+      if (num === currentNumber) {
+        cell.style.visibility = 'hidden'; // Дұрыс санды жасыру
+        currentNumber++;
+        if (currentNumber > 25) {
+          endGame();
+        }
+      } else {
+        errors++; // Қате жауап
+        errorsDisplay.textContent = `Қателер: ${errors}`;
+      }
+    }
+
+    // Ойынды бастау
+    function startGame() {
+      currentNumber = 1;
+      errors = 0;
+      errorsDisplay.textContent = 'Қателер: 0';
+      timeDisplay.textContent = 'Уақыт: 0 сек';
+      startTime = Date.now();
+      clearInterval(timerInterval);
+      timerInterval = setInterval(updateTime, 100);
+      generateGrid();
+    }
+
+    // Уақыт жаңарту
+    function updateTime() {
+      const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(1);
+      timeDisplay.textContent = `Уақыт: ${elapsedTime} сек`;
+    }
+
+    // Ойынның аяқталуы
+    function endGame() {
+      clearInterval(timerInterval);
+      const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+      alert(`Ойын аяқталды! Сіздің уақытыңыз: ${totalTime} сек, Қателер: ${errors}`);
+    }
+  </script>
+</body>
+</html>
